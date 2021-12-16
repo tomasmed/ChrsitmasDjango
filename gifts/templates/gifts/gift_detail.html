@@ -1,0 +1,93 @@
+{% extends "base_menu.html" %}
+{% load humanize %} <!-- https://docs.djangoproject.com/en/3.0/ref/contrib/humanize -->
+{% block head %}
+<style>
+.overlay{
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+  display: none;
+  background-color: rgba(0,0,0,0.5); /*dim the background*/
+}
+</style>
+{% endblock %}
+{% block content %}
+
+{% if gift.content_type %}
+<div id="overlay" class="overlay" style="text-align: center;"
+   onclick="document.getElementById('overlay').style.display = 'none';" >
+<img style="width:90%;margin-top: 50px; border:3px solid black;" src="{% url 'gifts:gift_picture' gift.id %}">
+</div>
+{% endif %}
+
+<span style="float: right;">
+({{ gift.updated_at|naturaltime }})
+{% if gift.owner == user %}
+<a href="{% url 'gifts:gift_update' gift.id %}"><i class="fa fa-pencil"></i></a>
+<a href="{% url 'gifts:gift_delete' gift.id %}"><i class="fa fa-trash"></i></a>
+{% endif %}
+</span>
+<h1>{{ gift.title }}</h1>
+
+<div class = "row">
+    {% if gift.content_type %}
+    <div class="col-md-6">
+        <p> Link:</p>
+        <a href= "{{ gift.link }}"> {{ gift.link|truncatechars:20}} </a>
+        <p>{{ gift.price }}</p>
+        <p>{{ gift.text }}</p>
+    </div>
+    <div class="col-md-6">
+        <div class="row"><img src="{% url 'gifts:gift_picture' gift.id %}"
+            onclick="document.getElementById('overlay').style.display = 'block';"></div>
+        <div class="row"><p class="text-muted"> Click the image to enlarge.</p></div>
+    </div>
+    {% else %}
+    <div class="col-md-12">
+        <p> Link:</p>
+        <a href= "{{ gift.link }}"> {{ gift.link|truncatechars:20}} </a>
+        <p>{{ gift.price }}</p>
+        <p>{{ gift.text }}</p>
+    </div>
+
+    {% endif %}
+
+
+</div>
+
+{% if gift.tags.all %}
+<p>Tags:
+  {% for tag in gift.tags.all %}
+  <span style="border:1px grey solid; background-color: LightGreen;">{{ tag }}</span>
+  {% endfor %}
+</p>
+{% endif %}
+
+{% if user.is_authenticated %}
+<br clear="all"/>
+<p>
+{% load crispy_forms_tags %}
+<form method="post" action="{% url 'gifts:gift_comment_create' gift.id %}">
+    {% csrf_token %}
+    {{ comment_form|crispy }}
+<input type="submit" value="Submit">
+<input type="submit" value="All Gifts" onclick="window.location.href='{% url 'gifts:all' %}';return false;">
+</form>
+</p>
+{% endif %}
+
+{% for comment in comments %}
+<p> {{ comment.text }}
+({{ comment.updated_at|naturaltime }})
+{% if user == comment.owner %}
+<a href="{% url 'gifts:gift_comment_delete' comment.id %}"><i class="fa fa-trash"></i></a>
+{% endif %}
+</p>
+{% endfor %}
+
+
+<p><a href="{% url 'gifts:all' %}">All gifts</a></p>
+{% endblock %}

@@ -1,0 +1,72 @@
+{% extends "base_menu.html" %}
+{% block content %}
+{% if gift.content_type %}
+
+<div id="overlay" class="overlay" style="text-align: center;"
+   onclick="document.getElementById('overlay').style.display = 'none';" >
+<img style="width:90%;margin-top: 50px; border:3px solid black;" src="{% url 'gifts:gift_picture' gift.id %}">
+</div>
+{% endif %}
+
+<h1>{{member.name}}'s Gifts</h1>
+
+<div>
+{% if gift_list %}
+    <div class="row row-cols-3 row-cols-md-2 g-4">
+        {% for gift in gift_list %}
+        <div class = "col">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                    <div class ="col-md-8">
+                        <h5 class="card-title">{{ gift.title }}</h5>
+                        <p class="card-text">{{gift.text}}</p>
+                        {% if gift.link %} <a href="{{gift.link}}" target="_blank">Gift Link</a> {% endif %}
+                    </div>
+
+                    <div class = "col-md-4">
+                        {% if gift.content_type %}
+                        <img class= "card-img img-fluid" src="{% url 'gifts:gift_picture' gift.id %}"
+                            onclick="document.getElementById('overlay').style.display = 'block';">
+                        {% endif %}
+                    </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                        <a class="btn btn-light" href="{% url 'gifts:gift_detail'  gift.id %}">More Info!</a>
+                        {% if gift.owner == member %}
+                        <a class="btn btn-light" href="{% url 'gifts:gift_update' gift.id %}">Edit</a>
+                        <a class="btn btn-light" href="{% url 'gifts:gift_delete' gift.id %}">Delete</a>
+                        {% endif %}
+                    </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p>There are no gifts for {{member.name}} in the database.</p>
+{% endif %}
+</div>
+
+<p>
+{% if user.is_authenticated %}
+<a href="{% url 'gifts:gift_create' %}">Add a gift</a> |
+<a href="{% url 'gifts:gift_link_create' %}">Add a gift from a link</a> |
+<a href="{% url 'logout' %}?next={% url 'gifts:all' %}">Logout</a>
+{% else %}
+<a href="{% url 'login' %}?next={% url 'gifts:all' %}">Login</a>
+{% endif %}
+</p>
+
+<div style="float:right">
+<!-- https://www.w3schools.com/howto/howto_css_search_button.asp -->
+<form>
+  <input type="text" placeholder="Search.." name="search"
+  {% if search %} value="{{ search }}" {% endif %}
+  >
+  <button type="submit"><i class="fa fa-search"></i></button>
+<a href="{% url 'gifts:all' %}"><i class="fa fa-undo"></i></a>
+</form>
+</div>
+
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends "base_menu.html" %}
+{% block content %}
+<h1>People with a gift list:</h1>
+
+{% if member_list %}
+<ul class="list-unstyled">
+  {% for member in member_list %}
+    <div class='row' style='margin-top:10px;'>
+        <div class='col-12'>
+            <li>
+                <span class="glyphicon glyphicon-gift"></span>
+                <a href="{% url 'gifts:member_gift_list'  member.id %}"> {{ member.name }}'s Gift List</a>
+
+            </li>
+        </div>
+    </div>
+  {% endfor %}
+</ul>
+{% else %}
+  <p>There are no members in the database.</p>
+{% endif %}
+
+<p>
+{% if user.is_authenticated %}
+<a href="{% url 'logout' %}?next={% url 'gifts:all' %}">Logout</a>
+{% else %}
+<a href="{% url 'login' %}?next={% url 'gifts:all' %}">Login</a>
+{% endif %}
+</p>
+
+
+
+{% endblock %}

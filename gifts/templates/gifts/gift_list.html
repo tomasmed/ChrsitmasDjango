@@ -1,0 +1,84 @@
+{% extends "base_menu.html" %}
+{% block content %}
+<h1>gifts</h1>
+
+<div style="float:right">
+<!-- https://www.w3schools.com/howto/howto_css_search_button.asp -->
+<form>
+  <input type="text" placeholder="Search.." name="search"
+  {% if search %} value="{{ search }}" {% endif %}
+  >
+  <button type="submit"><i class="fa fa-search"></i></button>
+<a href="{% url 'gifts:all' %}"><i class="fa fa-undo"></i></a>
+</form>
+</div>
+
+
+<p>
+{% if gift_list %}
+<ul>
+  {% for gift in gift_list %}
+    <li>
+        <a href="{% url 'gifts:gift_detail'  gift.id %}">{{ gift.title }}</a>
+        {% if gift.owner == user %}
+        (<a href="{% url 'gifts:gift_update' gift.id %}">Edit</a> |
+        <a href="{% url 'gifts:gift_delete' gift.id %}">Delete</a>)
+        {% endif %}
+
+        {% if user.is_authenticated %}
+        <!-- Two hrefs with two stacked icons each - one showing and one hidden -->
+        <a href="#" onclick=
+            "favPost('{% url 'gifts:gift_unfavorite' gift.id %}', {{ gift.id }} );return false;"
+            {% if gift.id not in favorites %} style="display: none;" {% endif %}
+            id="favorite_star_{{gift.id}}">
+        <span class="fa-stack" style="vertical-align: middle;">
+        <i class="fa fa-star fa-stack-1x" style="color: orange;"></i>
+        <i class="fa fa-star-o fa-stack-1x"></i>
+        </span>
+        </a>
+        <!-- the second href -->
+        <a href="#" onclick=
+             "favPost('{% url 'gifts:gift_favorite' gift.id %}', {{ gift.id }} );return false;"
+            {% if gift.id in favorites %} style="display: none;" {% endif %}
+            id="unfavorite_star_{{gift.id}}">
+        <span class="fa-stack" style="vertical-align: middle;">
+        <i class="fa fa-star fa-stack-1x" style="display: none; color: orange;"></i>
+        <i class="fa fa-star-o fa-stack-1x"></i>
+        </span>
+        </a>
+        {% endif %}
+
+
+    </li>
+  {% endfor %}
+</ul>
+{% else %}
+  <p>There are no gifts in the database.</p>
+{% endif %}
+</p>
+<p>
+<a href="{% url 'gifts:gift_create' %}">Add an gift</a> |
+{% if user.is_authenticated %}
+<a href="{% url 'logout' %}?next={% url 'gifts:all' %}">Logout</a>
+{% else %}
+<a href="{% url 'login' %}?next={% url 'gifts:all' %}">Login</a>
+{% endif %}
+</p>
+
+
+
+<script>
+function favPost(url, gift_id) {
+    console.log('Requesting JSON');
+    $.post(url, {},  function(rowz){
+        console.log(url, 'finished');
+        $("#unfavorite_star_"+gift_id).toggle();
+        $("#favorite_star_"+gift_id).toggle();
+    }).fail(function(xhr) {
+        alert('Url failed with '+xhr.status+' '+url);
+    });
+}
+</script>
+
+
+{% endblock %}

@@ -1,0 +1,33 @@
+{% load crispy_forms_tags %}
+{% block content %}
+
+{% if user.is_authenticated %}
+<h1>Welcome to Homework TimeCode_3854</h1>
+
+
+
+    {% if solo_d %}
+    <p>Your result is {{solo_d}}</p>
+    {% endif %}
+
+
+
+    <form action="" method="post" id="upload_form" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <label for="field1">Field1: </label>
+        <input type="text" id="field1" name="field1"><br><br>
+
+        <label for="field2">Field2: </label>
+        <input type="text" id="field2" name="field2"><br><br>
+
+        <button type="submit">Submit</button>
+    </form>
+
+
+
+{% endif %}
+
+<p>The instructions below are your assignment specification. Your assignment solution does not need to contain anything beyond the above "Submit" button.</p>
+
+{% endblock %}

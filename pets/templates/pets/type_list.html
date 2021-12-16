@@ -1,0 +1,22 @@
+{% extends "base_bootstrap.html" %}
+
+{% block content %}
+  <h1>Pet Type List</h1>
+  {% if type_list %}
+  <ul>
+    {% for type in type_list %}
+      <li>
+          {{ type.name }}
+         (<a href="{% url 'pets:type_update' type.id %}">Update</a> |
+          <a href="{% url 'pets:type_delete' type.id %}">Delete</a>)
+      </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+    <p>There are no pet Types in the library.</p>
+  {% endif %}
+  <p><a href="{% url 'pets:type_create' %}">Add a type</a></p>
+  <p>
+    <a href="{% url 'pets:all' %}">Back to pets</a>
+  </p>
+{% endblock %}

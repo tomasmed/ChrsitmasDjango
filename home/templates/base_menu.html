@@ -1,0 +1,55 @@
+{% extends "base_bootstrap.html" %}
+{% block navbar %}
+{% load app_tags %}
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark ">
+  <div class="container-fluid">
+     <a class="navbar-brand" href="/">{{ settings.APP_NAME }}</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- https://stackoverflow.com/questions/22047251/django-dynamically-get-view-url-and-check-if-its-the-current-page -->
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="nav navbar-nav">
+          {% url 'ads' as ads %}
+          <li class="nav-item">
+              <a class="nav-link" href="{% url 'ads:all' %}">Ads</a></li>
+
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'gifts:member_list' %}">Holiday Gift Lists!</a></li>
+
+        </ul>
+        <ul class="navbar-nav ms-auto">
+            {% if user.is_authenticated %}
+
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'ads:ad_create' %}">Create Ad (This is for Homework)</a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'gifts:gift_create' %}">Create Gift</a>
+            </li>
+
+
+            <li class="nav-item dropdown">
+                 <a class="nav-link dropdown-toggle " href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <img style="width: 25px;" src="{{ user|gravatar:60 }}"/><b class="caret me-auto"></b>
+                </a>
+
+                <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                    <li class="nav-item">
+                        <a class="dropdown-item" href="{% url 'logout' %}?next={% url 'ads:all' %}">Logout</a>
+                    </li>
+                </ul>
+            </li>
+
+            {% else %}
+            <li class="nav-item">
+            <a href="{% url 'login' %}?next={% url 'ads:all' %}">Login</a>
+            </li>
+            {% endif %}
+        </ul>
+    </div>
+  </div>
+</nav>
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends "base_bootstrap.html" %}
+
+{% block content %}
+
+{% if form.errors %}
+  <p>Your username and password didn't match. Please try again.</p>
+{% endif %}
+
+{% if next %}
+  {% if user.is_authenticated %}
+    <p>Your account doesn't have access to this page. To proceed,
+    please login with an account that has access.</p>
+  {% else %}
+    <p>Please login to see this site.</p>
+  {% endif %}
+{% endif %}
+
+{% load crispy_forms_tags %}
+<form method="post" action="{% url 'login' %}">
+    {% csrf_token %}
+    {{ form|crispy }}
+
+    <div class="row" style="margin-top:10px;">
+        <div class = "col-3">
+
+                <input type="submit" class="btn btn-primary" value="Login Locally" />
+                <input type="hidden" name="next" value="{{ next }}" />
+        </div>
+        <div class = "col-3">
+            <a class="btn btn-primary" href="{% url 'gifts:signup'%}">Sign Up</a>
+        </div>
+
+    </div>
+</form>
+
+
+
+
+{% load static %}
+{% if settings.SOCIAL_AUTH_GITHUB_KEY %}
+<hr/>
+<a class="btn btn-info" role="button" href="{% url 'social:begin' 'github' %}">
+    <i class="fa fa-github" aria-hidden="true"></i>
+    Login with GitHub</a>
+<a href="{% url 'social:begin' 'google-oauth2' %}"><img src="{% static 'SignInGoog.png' %}" syle="height:75%"></img></a>
+{% endif %}
+
+<!-- ROOT_URLCONF {{ settings.ROOT_URLCONF }} -->
+
+{% endblock %}
+
